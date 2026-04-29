@@ -12,7 +12,25 @@ interface FeedItem {
 const RSS_URL =
   "https://news.google.com/rss/search?q=family+office+venture+capital+tech+investing&hl=en-US&gl=US&ceid=US:en";
 
-const PROXY = `https://api.allorigins.win/get?url=${encodeURIComponent(RSS_URL)}`;
+const PROXIES = [
+  `https://corsproxy.io/?${encodeURIComponent(RSS_URL)}`,
+  `https://api.allorigins.win/raw?url=${encodeURIComponent(RSS_URL)}`,
+];
+
+async function fetchRSS(): Promise<string> {
+  for (const url of PROXIES) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (res.ok) {
+        const text = await res.text();
+        if (text.includes("<item>")) return text;
+      }
+    } catch {
+      // try next proxy
+    }
+  }
+  throw new Error("All proxies failed");
+}
 
 function parseRSS(xml: string): FeedItem[] {
   const parser = new DOMParser();
@@ -52,25 +70,14 @@ export default function NewsPage() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(PROXY);
-        if (!res.ok) throw new Error("fetch failed");
-        const json = await res.json();
-        const parsed = parseRSS(json.contents as string);
-        setItems(parsed);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    fetchRSS()
+      .then((xml) => setItems(parseRSS(xml)))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <div className="pt-16 md:pt-20">
-      {/* Page header */}
       <div className="bg-[#0a1628] py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <p className="text-[#c09040] text-xs tracking-[0.3em] uppercase mb-4 font-medium">
@@ -86,7 +93,6 @@ export default function NewsPage() {
         </div>
       </div>
 
-      {/* Feed */}
       <div className="max-w-7xl mx-auto px-6 lg:px-8 section-pad">
         {loading && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#e2ddd5]">
