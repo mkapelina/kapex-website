@@ -51,6 +51,12 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            <Link
+              href="/portal"
+              className="text-xs tracking-[0.12em] uppercase border border-[#c09040] text-[#c09040] hover:bg-[#c09040] hover:text-[#0a1628] transition-colors duration-200 px-4 py-1.5 rounded"
+            >
+              Member Login
+            </Link>
           </nav>
 
           {/* Mobile hamburger */}
@@ -80,6 +86,13 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            <Link
+              href="/portal"
+              onClick={() => setMenuOpen(false)}
+              className="text-xs tracking-[0.12em] uppercase border border-[#c09040] text-[#c09040] hover:bg-[#c09040] hover:text-[#0a1628] transition-colors duration-200 px-4 py-2 rounded text-center mt-2"
+            >
+              Member Login
+            </Link>
           </nav>
         </div>
       )}
