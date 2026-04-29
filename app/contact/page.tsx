@@ -62,15 +62,6 @@ export default function ContactPage() {
               like to hear from you.
             </p>
             <div className="mt-10 border-t border-[#e2ddd5] pt-8">
-              <p className="text-[#a39d93] text-xs tracking-[0.2em] uppercase mb-2 font-medium">
-                Email
-              </p>
-              <a
-                href="mailto:mk@kapexllc.com"
-                className="text-[#0a1628] text-base hover:text-[#c09040] transition-colors duration-200"
-              >
-                mk@kapexllc.com
-              </a>
             </div>
           </div>
 
